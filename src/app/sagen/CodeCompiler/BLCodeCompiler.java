@@ -60,13 +60,13 @@ public class BLCodeCompiler {
      * @throws BLCodeCompilerException
      *      Every exception thrown by this method will be wrapped in this exception.
      */
-    public Class compile(Path classBodyPath) throws BLCodeCompilerException {
+    public Class compile(Path classBodyPath, boolean printSourceInError) throws BLCodeCompilerException {
         String sourceCode = loadSourceFile(classBodyPath);
         String generatedClassname = generateClassName();
         sourceCode = sourceCode
                 .replace("ClassName", generatedClassname)
                 .replace("\t", "    ");
-        return compile(sourceCode, generatedClassname);
+        return compile(sourceCode, generatedClassname, printSourceInError);
     }
 
     /**
@@ -84,15 +84,15 @@ public class BLCodeCompiler {
      * @throws BLCodeCompilerException
      *      Every exception thrown by this method will be wrapped in this exception.
      */
-    public Class compile(String sourceCode) throws BLCodeCompilerException {
+    public Class compile(String sourceCode, boolean printSourceInError) throws BLCodeCompilerException {
         String generatedClassname = generateClassName();
         sourceCode = sourceCode
                 .replace("ClassName", generatedClassname)
                 .replace("\t", "    ");
-        return compile(sourceCode, generatedClassname);
+        return compile(sourceCode, generatedClassname, printSourceInError);
     }
 
-    private Class compile(String sourceCode, String className) throws BLCodeCompilerException {
+    private Class compile(String sourceCode, String className, boolean printSourceInError) throws BLCodeCompilerException {
         try {
             // write the class to tmp
             Path sourcePath = Paths.get(System.getProperty("java.io.tmpdir"), className + ".java");
@@ -134,7 +134,8 @@ public class BLCodeCompiler {
                 for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
                     exceptionBody.append(String.format("%d:%d", diagnostic.getLineNumber(), diagnostic.getColumnNumber()));
                 }
-                exceptionBody.append("\nSource code that failed:\n").append(addLinenumbersToSource(sourceCode));
+                if(printSourceInError)
+                    exceptionBody.append("\nSource code that failed:\n").append(addLinenumbersToSource(sourceCode));
                 throw new BLCodeCompilerException(exceptionBody.toString());
             }
 
