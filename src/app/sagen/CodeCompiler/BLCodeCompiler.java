@@ -134,7 +134,7 @@ public class BLCodeCompiler {
                 for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
                     exceptionBody.append(String.format("%d:%d", diagnostic.getLineNumber(), diagnostic.getColumnNumber()));
                 }
-                exceptionBody.append("\nSource code that failed:\n").append(addLinenumbersToSource(sourceCode));
+                //exceptionBody.append("\nSource code that failed:\n").append(addLinenumbersToSource(sourceCode));
                 throw new BLCodeCompilerException(exceptionBody.toString());
             }
 
