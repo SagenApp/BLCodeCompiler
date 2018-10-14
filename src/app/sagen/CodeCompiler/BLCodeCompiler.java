@@ -63,7 +63,9 @@ public class BLCodeCompiler {
     public Class compile(Path classBodyPath) throws BLCodeCompilerException {
         String sourceCode = loadSourceFile(classBodyPath);
         String generatedClassname = generateClassName();
-        sourceCode = sourceCode.replace("ClassName", generatedClassname);
+        sourceCode = sourceCode
+                .replace("ClassName", generatedClassname)
+                .replace("\t", "    ");
         return compile(sourceCode, generatedClassname);
     }
 
@@ -84,7 +86,9 @@ public class BLCodeCompiler {
      */
     public Class compile(String sourceCode) throws BLCodeCompilerException {
         String generatedClassname = generateClassName();
-        sourceCode = sourceCode.replace("ClassName", generatedClassname);
+        sourceCode = sourceCode
+                .replace("ClassName", generatedClassname)
+                .replace("\t", "    ");
         return compile(sourceCode, generatedClassname);
     }
 
