@@ -65,7 +65,8 @@ public class BLCodeCompiler {
         String generatedClassname = generateClassName();
         sourceCode = sourceCode
                 .replace("ClassName", generatedClassname)
-                .replace("\t", "    ");
+                .replace("\t", "    ")
+                .replace("\\n", "\n");
         return compile(sourceCode, generatedClassname, printSourceInError);
     }
 
@@ -88,7 +89,8 @@ public class BLCodeCompiler {
         String generatedClassname = generateClassName();
         sourceCode = sourceCode
                 .replace("ClassName", generatedClassname)
-                .replace("\t", "    ");
+                .replace("\t", "    ")
+                .replace("\\n", "\n");
         return compile(sourceCode, generatedClassname, printSourceInError);
     }
 
@@ -130,9 +132,12 @@ public class BLCodeCompiler {
 
             // run the compiler, if not successful -> print error and return
             if (!compilationTask.call()) {
-                StringBuilder exceptionBody = new StringBuilder("Exception while compiling java code!\n\nError on the following lines: ");
+                StringBuilder exceptionBody = new StringBuilder("Exception while compiling java code!\n\nError on the following lines:\n");
                 for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-                    exceptionBody.append(String.format("%d:%d", diagnostic.getLineNumber(), diagnostic.getColumnNumber()));
+                    exceptionBody.append(String.format("%d:%d %s\n%s\n \n",
+                            diagnostic.getLineNumber(),
+                            diagnostic.getColumnNumber(),
+                            diagnostic.getMessage(null), sourceCode.split("\n")[(int)(diagnostic.getLineNumber() - 1)]));
                 }
                 if(printSourceInError)
                     exceptionBody.append("\nSource code that failed:\n").append(addLinenumbersToSource(sourceCode));
